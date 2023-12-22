@@ -8,14 +8,15 @@ int main ()
 	cout<<endl<<"2-Shortest-Job-First (SJF) ";
 	cout<<endl<<"3-Priority Scheduling";
 	cout<<endl<<"4-Round Robin(RR)";
+	
 	int selectedoption;
-	switch(selectedoption)
-	{
-		case 1: fcfs(); break;
-		case 2: sjf(); break;
-		case 3: priority(); break;
-		case 4: rr(); break;
-		default: cout<<"please select an option between 1-4";
-    }
+	// switch(selectedoption)
+	// {
+	// 	case 1: fcfs(); break;
+	// 	case 2: sjf(); break;
+	// 	case 3: priority(); break;
+	// 	case 4: rr(); break;
+	// 	default: cout<<"please select an option between 1-4";
+    // }
 	return 0;
 }
