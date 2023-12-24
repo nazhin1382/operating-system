@@ -9,7 +9,7 @@ void RR();
 int main ()
 {
 
-
+firstmenu();
 
 return 0;
 
@@ -23,11 +23,12 @@ cout<<"2-Preemptive Mode"<<endl;
 cout<<"3-Show Result"<<endl;
 cout<<"4-End Program";
 int firstmenuanswer;
+cin>>firstmenuanswer;
 switch(firstmenueanswer)
  { case 1: methodmenu();
   case 2: preemtivemode();
   case 3: result();
-  case 4: exit;
+  case 4: exit();
   default: cout<<"please select between the mene choices (1-4)";
 
  }
@@ -36,19 +37,20 @@ switch(firstmenueanswer)
 void methodmenu()
 {
 //methodmenue for the user 
-cout<<"1-None of scheduling method chosen""<<endl;
+cout<<"1-None of scheduling method chosen"<<endl;
 cout<<"2-First Come,First Served Scheduling"<<endl;
 cout<<"3-Shortest-Job-First Scheduling"<<endl;
 cout<<"4-Priority Scheduling"<<endl;
-cout<<"Round-Robin Scheduling (You should also obtain time quantum value)";
+cout<<"5-Round-Robin Scheduling (You should also obtain time quantum value)"<<endl;
 int methodmenuanswer;
+cin>>methodmenuanswer;
 switch(methodmenuanswer)
- {case 1: firstmenu();
-  case 2: fcfs();
-  case 3: sjf();
-  case 4: priority();
-  case 5: RR();
-  default: cout<<"please select between the mene choices (1-4)";
+ {case 1: firstmenu();break;
+  case 2: fcfs();break;
+  case 3: sjf();break;
+  case 4: priority();break;
+  case 5: RR();break;
+  default: cout<<"please select between the mene choices (1-5)";
  }
 
 }
