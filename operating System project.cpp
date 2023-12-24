@@ -1,7 +1,9 @@
-include <iostream>
-using namespace sd;
+#include <iostream>
+using namespace std;
 void firstmenu();
 void methodmenu();
+void preemtivemode();
+void result();
 void fcfs();
 void sjf();
 void priority();
@@ -24,12 +26,12 @@ cout<<"3-Show Result"<<endl;
 cout<<"4-End Program";
 int firstmenuanswer;
 cin>>firstmenuanswer;
-switch(firstmenueanswer)
- { case 1: methodmenu();
-  case 2: preemtivemode();
-  case 3: result();
-  case 4: exit();
-  default: cout<<"please select between the mene choices (1-4)";
+switch(firstmenuanswer)
+ { case 1: methodmenu();break;
+   case 2: preemtivemode();break;
+   case 3: result();break;
+   case 4: exit(1);break;
+   default: cout<<"please select between the mene choices (1-4)";
 
  }
 
@@ -53,4 +55,28 @@ switch(methodmenuanswer)
   default: cout<<"please select between the mene choices (1-5)";
  }
 
+}
+void preemtivemode()
+{
+    
+}
+void showresult()
+{
+    
+}
+void fcfs()
+{
+    
+}
+void sjf()
+{
+
+}
+void priority()
+{
+    
+}
+void rr()
+{
+    
 }
