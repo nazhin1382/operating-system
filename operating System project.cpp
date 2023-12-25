@@ -1,119 +1,144 @@
 #include <iostream>
 #include <unistd.h>
-#include fstream;
+#include <fstream>
+
 using namespace std;
 void firstmenu();
 void methodmenu();
-void preemtivemode();
+void preemptivemode();
 void result();
 void fcfs();
 void sjf();
 void priority();
 void rr();
-int getopt(int argc, char * const argv[],const char *optstring);
-struct node * createprocess(string);
-void display processes(struct process *);
-struct node * addprocess(struct process *, string);
-struct process{
- string data ;
- struct process *next;
-};
-int main (int argc, char *argv[])
+
+struct process *createprocess(int, int, int);
+void displayprocess(struct process *);
+struct node *addprocess(struct process *, int, int, int);
+struct process
 {
+    int bursttime;
+    int arrivaltime;
+    int priority;
+    struct process *next;
+};
 
-firstmenu();
+int main(int argc, char *argv[])
+{
+    firstmenu();
 
-return 0;
-
+    return 0;
 }
+
 void firstmenu()
 {
-//menue for the user 
-cout<<"CPU Scheduler Simulator"<<endl;
-cout<<"1-Scheduling Method"<<endl;
-cout<<"2-Preemptive Mode"<<endl;
-cout<<"3-Show Result"<<endl;
-cout<<"4-End Program";
-int firstmenuanswer;
-cin>>firstmenuanswer;
-switch(firstmenuanswer)
- { case 1: methodmenu();break;
-   case 2: preemtivemode();break;
-   case 3: result();break;
-   case 4: exit(1);break;
-   default: cout<<"please select between the mene choices (1-4)";
-
- }
-
+    // menue for the user
+    cout << "CPU Scheduler Simulator" << endl;
+    cout << "1-Scheduling Method" << endl;
+    cout << "2-Preemptive Mode" << endl;
+    cout << "3-Show Result" << endl;
+    cout << "4-End Program";
+    int firstmenuanswer;
+    cin >> firstmenuanswer;
+    switch (firstmenuanswer)
+    {
+    case 1:
+        methodmenu();
+        break;
+    case 2:
+        preemptivemode();
+        break;
+    case 3:
+        result();
+        break;
+    case 4:
+        exit(1);
+        break;
+    default:
+        cout << "please select between the menu choices (1-4)";
+    }
 }
 void methodmenu()
 {
-//methodmenue for the user 
-cout<<"1-None of scheduling method chosen"<<endl;
-cout<<"2-First Come,First Served Scheduling"<<endl;
-cout<<"3-Shortest-Job-First Scheduling"<<endl;
-cout<<"4-Priority Scheduling"<<endl;
-cout<<"5-Round-Robin Scheduling (You should also obtain time quantum value)"<<endl;
-int methodmenuanswer;
-cin>>methodmenuanswer;
-switch(methodmenuanswer)
- {case 1: firstmenu();break;
-  case 2: fcfs();break;
-  case 3: sjf();break;
-  case 4: priority();break;
-  case 5: rr();break;
-  default: cout<<"please select between the mene choices (1-5)";
- }
-
+    // methodmenue for the user
+    cout << "1-None of scheduling method chosen" << endl;
+    cout << "2-First Come,First Served Scheduling" << endl;
+    cout << "3-Shortest-Job-First Scheduling" << endl;
+    cout << "4-Priority Scheduling" << endl;
+    cout << "5-Round-Robin Scheduling (You should also obtain time quantum value)" << endl;
+    int methodmenuanswer;
+    cin >> methodmenuanswer;
+    switch (methodmenuanswer)
+    {
+    case 1:
+        firstmenu();
+        break;
+    case 2:
+        fcfs();
+        break;
+    case 3:
+        sjf();
+        break;
+    case 4:
+        priority();
+        break;
+    case 5:
+        rr();
+        break;
+    default:
+        cout << "please select between the mene choices (1-5)";
+    }
 }
 void result()
 {
-    firstmenu();    
+    firstmenu();
 }
-void preemtivemode()
+void preemptivemode()
 {
-    firstmenu(); 
+    firstmenu();
 }
 void showresult()
 {
-    firstmenu(); 
+    firstmenu();
 }
 void fcfs()
 {
-    firstmenu(); 
+    firstmenu();
 }
 void sjf()
 {
-   firstmenu(); 
+    firstmenu();
 }
 void priority()
 {
-    firstmenu(); 
+    firstmenu();
 }
 void rr()
 {
-   firstmenu(); 
+    firstmenu();
 }
-struct process * createprocess(string data)
+struct process *createprocess(int bursttime, int arrivaltime, int priority)
 {
-     struct process * temp;
-     temp = (struct process *) malloc(sizeof(process));
-     temp->item = data;
-     temp->next = NULL;
-     return temp;
+    struct process *temp;
+    temp = (struct process *)malloc(sizeof(process));
+    temp->bursttime = bursttime;
+    temp->arrivaltime = arrivaltime;
+    temp->priority = priority;
+    temp->next = NULL;
+    return temp;
 }
-struct process* insertprocess(struct process *header, string data)
+struct process *insertprocess(struct process *header, int bursttime, int arrivaltime, int priority)
 {
-       struct process * temp = createprocess(data);
-       struct process * headertemp;
-       if (header == NULL)
-       {
-          header = temp;
-          return header;
-       }
-       headertemp=header;
-       while(headertemp->next != NULL)
-            headertemp=headertemp->next;
-       headertemp->next = temp;
-       return header;
+    struct process *temp = createprocess(bursttime, arrivaltime, priority);
+    struct process *headertemp;
+    if (header == NULL)
+    {
+        header = temp;
+        return header;
+    }
+    headertemp = header;
+    while (headertemp->next != NULL)
+        headertemp = headertemp->next;
+    headertemp->next = temp;
+    return header;
 }
