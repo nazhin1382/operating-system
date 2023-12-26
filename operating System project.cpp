@@ -1,6 +1,9 @@
 #include <iostream>
 #include <unistd.h>
 #include <fstream>
+#include <string>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 void firstmenu();
@@ -14,7 +17,7 @@ void rr();
 
 struct process *createprocess(int, int, int);
 void displayprocess(struct process *);
-struct node *addprocess(struct process *, int, int, int);
+struct process *addprocess(struct process *, int, int, int);
 struct process
 {
     int bursttime;
@@ -24,8 +27,55 @@ struct process
 };
 
 int main(int argc, char *argv[])
-{
-    firstmenu();
+{   
+    
+    
+    /*while ((opt = getopt(argc, argv, "nt:")) != -1)
+     {
+        switch (opt) {
+        case 'n':
+            flags = 1;
+            break;
+        case 't':
+            nsecs = atoi(optarg);
+            tfnd = 1;
+            break;
+        default: 
+            fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }*/
+        
+    cout << "argc is: " << argc << endl;
+    for (int i = 0; i < argc; i++)
+    {
+        cout << i << "\t" << argv[i] << endl;
+    }
+    
+
+    return 0;
+
+    string inputfilename = "input.txt";
+    ifstream input(inputfilename);
+    string line;
+    struct process *header=NULL;
+
+
+    while (getline(input, line))
+    {
+        replace(line.begin(), line.end(), ':', ' ');
+        istringstream linestream(line);
+        int bursttime, arrivaltime, priority;
+        if (!(linestream >> bursttime >> arrivaltime >> priority))
+        {
+            break;
+        }
+    
+        addprocess(header,bursttime, arrivaltime, priority);
+        // cout << bursttime << '\t' << arrivaltime << '\t' << priority << endl;
+    }
+
+    // firstmenu();
 
     return 0;
 }
