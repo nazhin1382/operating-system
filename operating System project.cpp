@@ -9,7 +9,7 @@ using namespace std;
 void firstmenu();
 void methodmenu();
 void preemptivemode();
-void result();
+void showresult();
 void fcfs();
 void sjf();
 void priority();
@@ -18,6 +18,8 @@ void rr();
 struct process *createprocess(int, int, int);
 void displayprocess(struct process *);
 struct process *addprocess(struct process *, int, int, int);
+void sortarrivaltime(process**); 
+
 struct process
 {
     int bursttime;
@@ -46,14 +48,14 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }*/
         
-    cout << "argc is: " << argc << endl;
+   /*cout << "argc is: " << argc << endl;
     for (int i = 0; i < argc; i++)
     {
         cout << i << "\t" << argv[i] << endl;
-    }
+    }*/ 
     
 
-    return 0;
+    //return 0;
 
     string inputfilename = "input.txt";
     ifstream input(inputfilename);
@@ -99,7 +101,7 @@ void firstmenu()
         preemptivemode();
         break;
     case 3:
-        result();
+        showresult();
         break;
     case 4:
         exit(1);
@@ -139,10 +141,7 @@ void methodmenu()
         cout << "please select between the mene choices (1-5)";
     }
 }
-void result()
-{
-    firstmenu();
-}
+
 void preemptivemode()
 {
     firstmenu();
@@ -152,7 +151,8 @@ void showresult()
     firstmenu();
 }
 void fcfs()
-{
+{   
+
     firstmenu();
 }
 void sjf()
@@ -192,3 +192,26 @@ struct process *insertprocess(struct process *header, int bursttime, int arrival
     headertemp->next = temp;
     return header;
 }
+void sortarrivaltime(process** header) 
+{ 
+   
+    process* previous = (*header); 
+    process* currunt = (*header)->next; 
+  
+    while (currunt != NULL) 
+    { 
+     
+        if (currunt->arrivaltime < previous->arrivaltime) 
+        { 
+            previous->next = currunt->next; 
+            currunt->next = (*header); 
+            (*header) = currunt; 
+            currunt = previous; 
+        } 
+
+        else
+            previous = currunt; 
+        currunt = currunt->next; 
+    } 
+} 
+  
