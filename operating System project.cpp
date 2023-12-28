@@ -6,11 +6,11 @@
 #include <algorithm>
 
 using namespace std;
-void firstmenu();
-void methodmenu( string *,bool);
-void preemptivemode( bool*,string);
-void showresult();
-void fcfs(bool );
+void firstmenu(struct process *);
+void methodmenu(string *, bool, struct process *);
+void preemptivemode(bool *, string, struct process *);
+void showresult(struct process *);
+void fcfs(bool, struct process *);
 void sjf();
 void priority();
 void rr();
@@ -20,7 +20,7 @@ void displayprocess(struct process *);
 struct process *insertprocess(struct process *, int, int, int);
 struct process *swap(struct process *, struct process *);
 void bubbleSort(struct process **);
-void fcfsnonepreemptive();
+void fcfsnonepreemptive(struct process *);
 
 struct process
 {
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         header = insertprocess(header, bursttime, arrivaltime, priority);
     }
 
-    // firstmenu();
+     firstmenu(header);
     cout << "this is the normal list" << endl;
     displayprocess(header);
     bubbleSort(&header);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void firstmenu()
+void firstmenu(struct process *header)
 {
     string selectedmethod = "1-none of the scheduling method chosen";
     bool preemptivem = false;
@@ -107,13 +107,13 @@ void firstmenu()
         switch (firstmenuanswer)
         {
         case 1:
-            methodmenu(&selectedmethod, preemptivem);
+            methodmenu(&selectedmethod, preemptivem, header);
             break;
         case 2:
-            preemptivemode(&preemptivem, selectedmethod);
+            preemptivemode(&preemptivem, selectedmethod, header);
             break;
         case 3:
-            showresult();
+            showresult(header);
             break;
         case 4:
             exit(1);
@@ -124,7 +124,7 @@ void firstmenu()
     }
 }
 
-void methodmenu(string* selectedmethod, bool preemptivem)
+void methodmenu(string *selectedmethod, bool preemptivem, struct process *header)
 {
     // methodmenue for the user
     cout << "1-None of scheduling method chosen" << endl;
@@ -141,7 +141,7 @@ void methodmenu(string* selectedmethod, bool preemptivem)
         break;
     case 2:
         *selectedmethod = "2-First Come,First Served Scheduling";
-        fcfs(preemptivem);
+        fcfs(preemptivem, header);
         break;
     case 3:
         *selectedmethod = "3-Shortest-Job-First Scheduling";
@@ -157,12 +157,12 @@ void methodmenu(string* selectedmethod, bool preemptivem)
     }
 }
 
-void preemptivemode(bool *preemptivem, string selectedmethod)
+void preemptivemode(bool *preemptivem, string selectedmethod, struct process *header)
 {
     if (selectedmethod == "1-none of the scheduling method chosen")
     {
         cout << "please first select a scheduling method ";
-        firstmenu();
+        firstmenu(header);
     }
     else
     {
@@ -191,11 +191,11 @@ void preemptivemode(bool *preemptivem, string selectedmethod)
         break;
     }
 }
-void showresult()
+void showresult(struct process *header)
 {
-    firstmenu();
+    firstmenu(header);
 }
-void fcfs(bool preemptivem)
+void fcfs(bool preemptivem, struct process *header)
 {
     if (preemptivem)
     {
@@ -203,7 +203,7 @@ void fcfs(bool preemptivem)
     }
     else
     {
-        fcfsnonepreemptive();
+        fcfsnonepreemptive(header);
     }
 }
 void sjf()
@@ -297,7 +297,27 @@ void bubbleSort(struct process **header)
             break;
     }
 }
-void fcfsnonepreemptive()
+void fcfsnonepreemptive(struct process *header)
 {
+    bubbleSort(&header);
+    struct process *temp = header;
 
+    int count = 0;
+    int currenttime =0;
+    while (temp->next != NULL)
+    {
+        count++;
+        temp = temp->next;
+    }
+    temp=header;
+    int waitingtime[count];
+        int counter=0;
+    while(temp!=NULL)
+    {   
+        waitingtime[counter++]=currenttime-temp->arrivaltime;
+        cout<<"this is the waiting time of procces "<<counter<<waitingtime[counter-1]<<endl;
+        currenttime+=temp->bursttime;
+        temp=temp->next;
+
+    }
 }
