@@ -18,7 +18,7 @@ void rr();
 struct process *createprocess(int, int, int);
 void displayprocess(struct process *);
 struct process *addprocess(struct process *, int, int, int);
-void sortarrivaltime(process**); 
+void sortarrivaltime(process **);
 
 struct process
 {
@@ -29,39 +29,40 @@ struct process
 };
 
 int main(int argc, char *argv[])
-{   
-    
-    
-    /*while ((opt = getopt(argc, argv, "nt:")) != -1)
-     {
-        switch (opt) {
-        case 'n':
-            flags = 1;
-            break;
-        case 't':
-            nsecs = atoi(optarg);
-            tfnd = 1;
-            break;
-        default: 
-            fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n",
-                    argv[0]);
-            exit(EXIT_FAILURE);
-        }*/
-        
-   /*cout << "argc is: " << argc << endl;
-    for (int i = 0; i < argc; i++)
+{
+    char opt;
+    bool fselected, oselected;
+    string inputfile, outputfile;
+
+    while ((opt = getopt(argc, argv, "f:o:")) != -1)
     {
-        cout << i << "\t" << argv[i] << endl;
-    }*/ 
-    
+        switch (opt)
+        {
+        case 'f':
+            inputfile = optarg;
+            istream inputfilename(inputfile);
+            fselected = true;
+            break;
+        case 'o':
+            outputfile = optarg;
+            ostream outputfilename(outputfile);
+            oselected = true;
 
-    //return 0;
+            break;
+        default:
+            cout << "wrong argument entered!!";
+        }
+    }
 
+    if (!fselected || !oselected)
+    {
+        cout << "you have to enter arguments f and o to continue" << endl;
+        exit(1);
+    }
     string inputfilename = "input.txt";
     ifstream input(inputfilename);
     string line;
-    struct process *header=NULL;
-
+    struct process *header = NULL;
 
     while (getline(input, line))
     {
@@ -72,12 +73,11 @@ int main(int argc, char *argv[])
         {
             break;
         }
-    
-        addprocess(header,bursttime, arrivaltime, priority);
-        // cout << bursttime << '\t' << arrivaltime << '\t' << priority << endl;
+
+        addprocess(header, bursttime, arrivaltime, priority);
     }
 
-    // firstmenu();
+    firstmenu();
 
     return 0;
 }
@@ -151,7 +151,7 @@ void showresult()
     firstmenu();
 }
 void fcfs()
-{   
+{
 
     firstmenu();
 }
@@ -192,26 +192,25 @@ struct process *insertprocess(struct process *header, int bursttime, int arrival
     headertemp->next = temp;
     return header;
 }
-void sortarrivaltime(process** header) 
-{ 
-   
-    process* previous = (*header); 
-    process* currunt = (*header)->next; 
-  
-    while (currunt != NULL) 
-    { 
-     
-        if (currunt->arrivaltime < previous->arrivaltime) 
-        { 
-            previous->next = currunt->next; 
-            currunt->next = (*header); 
-            (*header) = currunt; 
-            currunt = previous; 
-        } 
+void sortarrivaltime(process **header)
+{
+
+    process *previous = (*header);
+    process *currunt = (*header)->next;
+
+    while (currunt != NULL)
+    {
+
+        if (currunt->arrivaltime < previous->arrivaltime)
+        {
+            previous->next = currunt->next;
+            currunt->next = (*header);
+            (*header) = currunt;
+            currunt = previous;
+        }
 
         else
-            previous = currunt; 
-        currunt = currunt->next; 
-    } 
-} 
-  
+            previous = currunt;
+        currunt = currunt->next;
+    }
+}
