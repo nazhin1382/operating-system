@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     }
 
     // firstmenu();
-    cout<<"this is the normal list"<<endl;
+    cout << "this is the normal list" << endl;
     displayprocess(header);
     bubbleSort(&header);
     cout << "this is the sorted linked list " << endl;
@@ -91,34 +91,41 @@ int main(int argc, char *argv[])
 
 void firstmenu()
 {
-    // menue for the user
-    cout << "CPU Scheduler Simulator" << endl;
-    cout << "1-Scheduling Method" << endl;
-    cout << "2-Preemptive Mode" << endl;
-    cout << "3-Show Result" << endl;
-    cout << "4-End Program";
-    int firstmenuanswer;
-    cin >> firstmenuanswer;
-    switch (firstmenuanswer)
+    string selectedmethod = "1-none of the scheduling method chosen";
+    bool preemptivem = false;
+    while (true)
     {
-    case 1:
-        methodmenu();
-        break;
-    case 2:
-        preemptivemode();
-        break;
-    case 3:
-        showresult();
-        break;
-    case 4:
-        exit(1);
-        break;
-    default:
-        cout << "please select between the menu choices (1-4)";
+        // menue for the user
+        cout << "CPU Scheduler Simulator" << endl;
+        cout << "1-Scheduling Method" << endl;
+        cout << "2-Preemptive Mode" << endl;
+        cout << "3-Show Result" << endl;
+        cout << "4-End Program";
+        int firstmenuanswer;
+        cin >> firstmenuanswer;
+        switch (firstmenuanswer)
+        {
+        case 1:
+            selectedmethod = methodmenu();
+            break;
+        case 2:
+            preemptivemode(&preemptivem, selectedmethod);
+            break;
+        case 3:
+            showresult();
+            break;
+        case 4:
+            exit(1);
+            break;
+        default:
+            cout << "please select between the menu choices (1-4)";
+        }
     }
 }
-void methodmenu()
+
+string methodmenu()
 {
+    string selectedmethod;
     // methodmenue for the user
     cout << "1-None of scheduling method chosen" << endl;
     cout << "2-First Come,First Served Scheduling" << endl;
@@ -130,49 +137,83 @@ void methodmenu()
     switch (methodmenuanswer)
     {
     case 1:
-        firstmenu();
+        selectedmethod = "1-None of scheduling method chosen";
         break;
     case 2:
-        fcfs();
+        selectedmethod = "2-First Come,First Served Scheduling";
         break;
     case 3:
-        sjf();
+        selectedmethod = "3-Shortest-Job-First Scheduling";
         break;
     case 4:
-        priority();
+        selectedmethod = "4-Priority Scheduling";
         break;
     case 5:
-        rr();
+        selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
         break;
     default:
         cout << "please select between the mene choices (1-5)";
     }
+    return selectedmethod;
 }
 
-void preemptivemode()
+void preemptivemode(bool *preemptivem, string selectedmethod)
 {
-    firstmenu();
+    if (selectedmethod == "1-none of the scheduling method chosen")
+    {
+        cout << "please first select a scheduling method ";
+        firstmenu();
+    }
+    else
+    {
+        cout << endl;
+        cout << "***please select the mode you want*** " << endl;
+        cout << "1-preemptive mode(on)" << endl;
+        cout << "2-nonepreemptive mode (off)" << endl;
+        cout << "3-cancel" << endl;
+    }
+    int preemptivemodeanswer;
+    switch (preemptivemodeanswer)
+    {
+    case 1:
+        *preemptivem = true;
+
+        break;
+
+    case 2:
+        *preemptivem = false;
+        break;
+    case 3:
+        break;
+
+    default:
+        cout << "please select from the numbers (1-3)";
+        break;
+    }
 }
 void showresult()
 {
     firstmenu();
 }
-void fcfs()
+void fcfs(bool ispreemptive)
 {
-
-    firstmenu();
+    if (ispreemptive)
+    {
+        cout << "first come first served is not supporting preemptive mode";
+    }
+    else
+    {
+        fcfsnonepreemptive();
+    }
 }
 void sjf()
 {
-    firstmenu();
 }
 void priority()
 {
-    firstmenu();
 }
 void rr()
 {
-    firstmenu();
 }
 struct process *createprocess(int bursttime, int arrivaltime, int priority)
 {
@@ -219,10 +260,9 @@ struct process *swap(struct process *ptr1, struct process *ptr2)
     return ptr2;
 }
 
-/* Function to sort the list */
 void bubbleSort(struct process **header)
 {
-    int count=0;
+    int count = 0;
     struct process *temp = *header;
     while (temp != NULL)
     {
@@ -247,15 +287,12 @@ void bubbleSort(struct process **header)
             if (p1->arrivaltime > p2->arrivaltime)
             {
 
-                /* update the link after swapping */
                 *h = swap(p1, p2);
                 swapped = 1;
             }
 
             h = &(*h)->next;
         }
-
-        /* break if the loop ended without any swap */
         if (swapped == 0)
             break;
     }
