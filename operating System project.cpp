@@ -17,8 +17,9 @@ void rr();
 
 struct process *createprocess(int, int, int);
 void displayprocess(struct process *);
-struct process *addprocess(struct process *, int, int, int);
-void sortarrivaltime(process **);
+struct process *insertprocess(struct process *, int, int, int);
+struct process *swap(struct process *, struct process *);
+void bubbleSort(struct process **);
 
 struct process
 {
@@ -33,6 +34,8 @@ int main(int argc, char *argv[])
     char opt;
     bool fselected, oselected;
     string inputfile, outputfile;
+    ifstream inputfilename;
+    ofstream outputfilename;
 
     while ((opt = getopt(argc, argv, "f:o:")) != -1)
     {
@@ -40,12 +43,12 @@ int main(int argc, char *argv[])
         {
         case 'f':
             inputfile = optarg;
-            istream inputfilename(inputfile);
+            inputfilename = ifstream(inputfile);
             fselected = true;
             break;
         case 'o':
             outputfile = optarg;
-            ostream outputfilename(outputfile);
+            outputfilename = ofstream(outputfile);
             oselected = true;
 
             break;
@@ -59,12 +62,11 @@ int main(int argc, char *argv[])
         cout << "you have to enter arguments f and o to continue" << endl;
         exit(1);
     }
-    string inputfilename = "input.txt";
-    ifstream input(inputfilename);
+
     string line;
     struct process *header = NULL;
 
-    while (getline(input, line))
+    while (getline(inputfilename, line))
     {
         replace(line.begin(), line.end(), ':', ' ');
         istringstream linestream(line);
@@ -74,10 +76,15 @@ int main(int argc, char *argv[])
             break;
         }
 
-        addprocess(header, bursttime, arrivaltime, priority);
+        header = insertprocess(header, bursttime, arrivaltime, priority);
     }
 
-    firstmenu();
+    // firstmenu();
+    cout<<"this is the normal list"<<endl;
+    displayprocess(header);
+    bubbleSort(&header);
+    cout << "this is the sorted linked list " << endl;
+    displayprocess(header);
 
     return 0;
 }
@@ -192,25 +199,64 @@ struct process *insertprocess(struct process *header, int bursttime, int arrival
     headertemp->next = temp;
     return header;
 }
-void sortarrivaltime(process **header)
+void displayprocess(struct process *header)
 {
+    if (header == NULL)
+        cout << "List is empty" << endl;
+    struct process *temp = header;
+    while (temp != NULL)
+    {
+        cout << temp->bursttime << " , " << temp->arrivaltime << " , " << temp->priority << " --> ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+struct process *swap(struct process *ptr1, struct process *ptr2)
+{
+    struct process *tmp = ptr2->next;
+    ptr2->next = ptr1;
+    ptr1->next = tmp;
+    return ptr2;
+}
 
-    process *previous = (*header);
-    process *currunt = (*header)->next;
+/* Function to sort the list */
+void bubbleSort(struct process **header)
+{
+    int count=0;
+    struct process *temp = *header;
+    while (temp != NULL)
+    {
+        count++;
+        temp = temp->next;
+    }
+    struct process **h;
+    int i, j, swapped;
 
-    while (currunt != NULL)
+    for (i = 0; i <= count; i++)
     {
 
-        if (currunt->arrivaltime < previous->arrivaltime)
+        h = header;
+        swapped = 0;
+
+        for (j = 0; j < count - i - 1; j++)
         {
-            previous->next = currunt->next;
-            currunt->next = (*header);
-            (*header) = currunt;
-            currunt = previous;
+
+            struct process *p1 = *h;
+            struct process *p2 = p1->next;
+
+            if (p1->arrivaltime > p2->arrivaltime)
+            {
+
+                /* update the link after swapping */
+                *h = swap(p1, p2);
+                swapped = 1;
+            }
+
+            h = &(*h)->next;
         }
 
-        else
-            previous = currunt;
-        currunt = currunt->next;
+        /* break if the loop ended without any swap */
+        if (swapped == 0)
+            break;
     }
 }
