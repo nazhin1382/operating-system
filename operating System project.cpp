@@ -7,10 +7,10 @@
 
 using namespace std;
 void firstmenu();
-void methodmenu();
-void preemptivemode();
+void methodmenu( string *,bool);
+void preemptivemode( bool*,string);
 void showresult();
-void fcfs();
+void fcfs(bool );
 void sjf();
 void priority();
 void rr();
@@ -20,6 +20,7 @@ void displayprocess(struct process *);
 struct process *insertprocess(struct process *, int, int, int);
 struct process *swap(struct process *, struct process *);
 void bubbleSort(struct process **);
+void fcfsnonepreemptive();
 
 struct process
 {
@@ -106,7 +107,7 @@ void firstmenu()
         switch (firstmenuanswer)
         {
         case 1:
-            selectedmethod = methodmenu();
+            methodmenu(&selectedmethod, preemptivem);
             break;
         case 2:
             preemptivemode(&preemptivem, selectedmethod);
@@ -123,9 +124,8 @@ void firstmenu()
     }
 }
 
-string methodmenu()
+void methodmenu(string* selectedmethod, bool preemptivem)
 {
-    string selectedmethod;
     // methodmenue for the user
     cout << "1-None of scheduling method chosen" << endl;
     cout << "2-First Come,First Served Scheduling" << endl;
@@ -137,24 +137,24 @@ string methodmenu()
     switch (methodmenuanswer)
     {
     case 1:
-        selectedmethod = "1-None of scheduling method chosen";
+        *selectedmethod = "1-None of scheduling method chosen";
         break;
     case 2:
-        selectedmethod = "2-First Come,First Served Scheduling";
+        *selectedmethod = "2-First Come,First Served Scheduling";
+        fcfs(preemptivem);
         break;
     case 3:
-        selectedmethod = "3-Shortest-Job-First Scheduling";
+        *selectedmethod = "3-Shortest-Job-First Scheduling";
         break;
     case 4:
-        selectedmethod = "4-Priority Scheduling";
+        *selectedmethod = "4-Priority Scheduling";
         break;
     case 5:
-        selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
+        *selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
         break;
     default:
         cout << "please select between the mene choices (1-5)";
     }
-    return selectedmethod;
 }
 
 void preemptivemode(bool *preemptivem, string selectedmethod)
@@ -195,9 +195,9 @@ void showresult()
 {
     firstmenu();
 }
-void fcfs(bool ispreemptive)
+void fcfs(bool preemptivem)
 {
-    if (ispreemptive)
+    if (preemptivem)
     {
         cout << "first come first served is not supporting preemptive mode";
     }
@@ -296,4 +296,8 @@ void bubbleSort(struct process **header)
         if (swapped == 0)
             break;
     }
+}
+void fcfsnonepreemptive()
+{
+
 }
