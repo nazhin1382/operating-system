@@ -4,13 +4,13 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-
 using namespace std;
-void firstmenu(struct process *, int);
 
+void firstmenu(struct process *, int);
 int *methodmenu(string *, bool, struct process *, int);
 void preemptivemode(bool *, string, struct process *);
 void showresult(int *, int);
+
 int *fcfs(bool, struct process *, int);
 void sjf();
 void priority();
@@ -20,7 +20,9 @@ struct process *createprocess(int, int, int);
 void displayprocess(struct process *);
 struct process *insertprocess(struct process *, int, int, int);
 struct process *swap(struct process *, struct process *);
-void bubbleSort(struct process **);
+void arrivaltimesort(struct process **);
+void bursttimesort(struct process **);
+
 int *fcfsnonepreemptive(struct process *, int);
 
 struct process
@@ -80,8 +82,8 @@ int main(int argc, char *argv[])
 
         header = insertprocess(header, bursttime, arrivaltime, priority);
     }
-    struct process *temp = header;
 
+    struct process *temp = header;
     int count = 0;
     while (temp != NULL)
     {
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
     firstmenu(header, count);
     cout << "this is the normal list" << endl;
     displayprocess(header);
-    bubbleSort(&header);
+    arrivaltimesort(&header);
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);
 
@@ -101,12 +103,13 @@ int main(int argc, char *argv[])
 
 void firstmenu(struct process *header, int count)
 {
-    string selectedmethod = "1-none of the scheduling method chosen";
+    string selectedmethod = "1-None of scheduling method chosen";
     bool preemptivem = false;
     while (true)
     {
         // menue for the user
-        cout <<endl<< "****CPU Scheduler Simulator****" << endl;
+        cout << endl
+             << "****CPU Scheduler Simulator****" << endl;
         cout << "1-Scheduling Method" << endl;
         cout << "2-Preemptive Mode" << endl;
         cout << "3-Show Result" << endl;
@@ -125,7 +128,12 @@ void firstmenu(struct process *header, int count)
             preemptivemode(&preemptivem, selectedmethod, header);
             break;
         case 3:
-            showresult( waitingtime, count);
+            if (selectedmethod == "1-None of scheduling method chosen")
+            {
+                cout << "please first select a scheduling method " << endl;
+                break;
+            }
+            showresult(waitingtime, count);
             break;
         case 4:
             exit(1);
@@ -140,7 +148,8 @@ int *methodmenu(string *selectedmethod, bool preemptivem, struct process *header
 {
     // methodmenue for the user
 
-    cout << endl<<"****select one of the scheduling method that you want to test****" << endl;
+    cout << endl
+         << "****select one of the scheduling method that you want to test****" << endl;
     cout << "1-None of scheduling method chosen" << endl;
     cout << "2-First Come,First Served Scheduling" << endl;
     cout << "3-Shortest-Job-First Scheduling" << endl;
@@ -176,7 +185,7 @@ int *methodmenu(string *selectedmethod, bool preemptivem, struct process *header
 
 void preemptivemode(bool *preemptivem, string selectedmethod, struct process *header)
 {
-    if (selectedmethod == "1-none of the scheduling method chosen")
+    if (selectedmethod == "1-None of scheduling method chosen")
     {
         cout << "please first select a scheduling method " << endl;
         return;
@@ -214,14 +223,14 @@ void preemptivemode(bool *preemptivem, string selectedmethod, struct process *he
 void showresult(int *waitingtime, int count)
 {
     float sum = 0;
-    cout << "waiting times for each process" << endl;
+    cout << "process waiting times:" << endl;
     for (int i = 0; i < count; i++)
     {
-        cout << "p[" << i + 1 << "] waiting time is:  " << waitingtime[i]<<endl;
+        cout << "p" << i + 1 << ": " << waitingtime[i] <<"ms"<< endl;
         sum += waitingtime[i];
     }
     float averagewaitingtime = sum / count;
-    cout << "average waiting time is :  " << averagewaitingtime;
+    cout << "average waiting time:  " << averagewaitingtime<<"ms"<<endl;
 }
 int *fcfs(bool preemptivem, struct process *header, int count)
 {
@@ -289,7 +298,7 @@ struct process *swap(struct process *ptr1, struct process *ptr2)
     return ptr2;
 }
 
-void bubbleSort(struct process **header)
+void arrivaltimesort(struct process **header)
 {
     int count = 0;
     struct process *temp = *header;
@@ -326,9 +335,46 @@ void bubbleSort(struct process **header)
             break;
     }
 }
+void bursttimesort(struct process **header)
+{
+    int count = 0;
+    struct process *temp = *header;
+    while (temp != NULL)
+    {
+        count++;
+        temp = temp->next;
+    }
+    struct process **h;
+    int i, j, swapped;
+
+    for (i = 0; i <= count; i++)
+    {
+
+        h = header;
+        swapped = 0;
+
+        for (j = 0; j < count - i - 1; j++)
+        {
+
+            struct process *p1 = *h;
+            struct process *p2 = p1->next;
+
+            if (p1->bursttime > p2->bursttime)
+            {
+
+                *h = swap(p1, p2);
+                swapped = 1;
+            }
+
+            h = &(*h)->next;
+        }
+        if (swapped == 0)
+            break;
+    }
+}
 int *fcfsnonepreemptive(struct process *header, int count)
 {
-    bubbleSort(&header);
+    arrivaltimesort(&header);
     struct process *temp = header;
 
     int startingtime = 0;
