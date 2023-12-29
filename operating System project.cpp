@@ -136,7 +136,9 @@ void firstmenu(struct process *header, int count)
             showresult(waitingtime, count);
             break;
         case 4:
+        
             exit(1);
+
             break;
         default:
             cout << "please select between the menu choices (1-4)";
