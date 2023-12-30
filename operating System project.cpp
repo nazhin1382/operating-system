@@ -12,7 +12,7 @@ void preemptivemode(bool *, string, struct process *);
 void showresult(int *, int);
 
 int *fcfs(bool, struct process *, int);
-void sjf();
+void sjfnonpreemptive();
 void priority();
 void rr();
 
@@ -21,8 +21,7 @@ void displayprocess(struct process *);
 struct process *insertprocess(struct process *, int, int, int);
 struct process *swap(struct process *, struct process *);
 void arrivaltimesort(struct process **);
-void bursttimesort(struct process **);
-
+struct process * bursttimesort(struct process **);
 int *fcfsnonepreemptive(struct process *, int);
 
 struct process
@@ -90,7 +89,6 @@ int main(int argc, char *argv[])
         count++;
         temp = temp->next;
     }
-
     firstmenu(header, count);
     cout << "this is the normal list" << endl;
     displayprocess(header);
@@ -246,8 +244,15 @@ int *fcfs(bool preemptivem, struct process *header, int count)
         return fcfsnonepreemptive(header, count);
     }
 }
-void sjf()
-{
+void sjfnonpreemptive(bool preemptive, struct process * header, int count)
+{   
+    
+    header=bursttimesort(header);
+    
+
+
+    
+
 }
 void priority()
 {
@@ -337,7 +342,7 @@ void arrivaltimesort(struct process **header)
             break;
     }
 }
-void bursttimesort(struct process **header)
+struct process * bursttimesort(struct process **header)
 {
     int count = 0;
     struct process *temp = *header;
@@ -373,6 +378,7 @@ void bursttimesort(struct process **header)
         if (swapped == 0)
             break;
     }
+    return *header;
 }
 int *fcfsnonepreemptive(struct process *header, int count)
 {
