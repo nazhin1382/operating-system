@@ -12,17 +12,21 @@ void preemptivemode(bool *, string, struct process *);
 void showresult(int *, int);
 
 int *fcfs(bool, struct process *, int);
-void sjfnonpreemptive();
+int *fcfsnonepreemptive(struct process *, int);
+
+int *sjfnonpreemptive(bool, struct process *, int);
+int *sjfpreemptive(bool, struct process *, int);
+
 void priority();
 void rr();
 
 struct process *createprocess(int, int, int);
-void displayprocess(struct process *);
 struct process *insertprocess(struct process *, int, int, int);
-struct process *swap(struct process *, struct process *);
+void displayprocess(struct process *);
+
 void arrivaltimesort(struct process **);
-struct process * bursttimesort(struct process **);
-int *fcfsnonepreemptive(struct process *, int);
+void bursttimesort(struct process **);
+struct process *swap(struct process *, struct process *);
 
 struct process
 {
@@ -89,12 +93,19 @@ int main(int argc, char *argv[])
         count++;
         temp = temp->next;
     }
-    firstmenu(header, count);
+    /*just for test and should be cleared
     cout << "this is the normal list" << endl;
     displayprocess(header);
     arrivaltimesort(&header);
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);
+        cout << "this is the normal list" << endl;
+    displayprocess(header);
+    bursttimesort(&header);
+    cout << "this is the sorted linked list " << endl;
+    displayprocess(header);*/
+
+    firstmenu(header, count);
 
     return 0;
 }
@@ -134,7 +145,7 @@ void firstmenu(struct process *header, int count)
             showresult(waitingtime, count);
             break;
         case 4:
-        
+
             exit(1);
 
             break;
@@ -170,6 +181,15 @@ int *methodmenu(string *selectedmethod, bool preemptivem, struct process *header
         break;
     case 3:
         *selectedmethod = "3-Shortest-Job-First Scheduling";
+        if (preemptivem)
+        {
+            return sjfpreemptive(preemptivem, header, count);
+        }
+        else
+        {
+            return sjfnonpreemptive(preemptivem, header, count);
+        }
+
         break;
     case 4:
         *selectedmethod = "4-Priority Scheduling";
@@ -226,11 +246,11 @@ void showresult(int *waitingtime, int count)
     cout << "process waiting times:" << endl;
     for (int i = 0; i < count; i++)
     {
-        cout << "p" << i + 1 << ": " << waitingtime[i] <<"ms"<< endl;
+        cout << "p" << i + 1 << ": " << waitingtime[i] << "ms" << endl;
         sum += waitingtime[i];
     }
     float averagewaitingtime = sum / count;
-    cout << "average waiting time:  " << averagewaitingtime<<"ms"<<endl;
+    cout << "average waiting time:  " << averagewaitingtime << "ms" << endl;
 }
 int *fcfs(bool preemptivem, struct process *header, int count)
 {
@@ -244,15 +264,15 @@ int *fcfs(bool preemptivem, struct process *header, int count)
         return fcfsnonepreemptive(header, count);
     }
 }
-void sjfnonpreemptive(bool preemptive, struct process * header, int count)
-{   
-    
-    header=bursttimesort(header);
-    
+int *sjfnonpreemptive(bool preemptivem, process *header, int count)
+{
 
-
-    
-
+    bursttimesort(&header);
+    displayprocess(header);
+    return NULL;
+}
+int *sjfpreemptive(bool preemptivem, process *header, int count)
+{
 }
 void priority()
 {
@@ -342,7 +362,7 @@ void arrivaltimesort(struct process **header)
             break;
     }
 }
-struct process * bursttimesort(struct process **header)
+void bursttimesort(struct process **header)
 {
     int count = 0;
     struct process *temp = *header;
@@ -378,7 +398,6 @@ struct process * bursttimesort(struct process **header)
         if (swapped == 0)
             break;
     }
-    return *header;
 }
 int *fcfsnonepreemptive(struct process *header, int count)
 {
@@ -391,6 +410,10 @@ int *fcfsnonepreemptive(struct process *header, int count)
     int counter = 0;
     while (temp != NULL)
     {
+        if (startingtime < temp->arrivaltime)
+        {
+            startingtime = temp->arrivaltime;
+        }
         waitingtime[counter++] = startingtime - temp->arrivaltime;
         // cout<<"this is the waiting time of procces "<<counter<<waitingtime[counter-1]<<endl;
         startingtime += temp->bursttime;
