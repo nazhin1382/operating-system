@@ -12,7 +12,7 @@ void preemptivemode(bool *, string, struct process *);
 void showresult(int *, int);
 
 int *fcfs(bool, struct process *, int);
-int *fcfsnonepreemptive(struct process *, int);
+int *fcfsnonpreemptive(struct process *, int);
 
 int *sjfnonpreemptive(bool, struct process *, int);
 int *sjfpreemptive(bool, struct process *, int);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 void firstmenu(struct process *header, int count)
 {
     string selectedmethod = "1-None of scheduling method chosen";
-    bool preemptivem = false;
+    bool preemptivem = 0;
     while (true)
     {
         // menue for the user
@@ -168,6 +168,7 @@ int *methodmenu(string *selectedmethod, bool preemptivem, struct process *header
     cout << "5-Round-Robin Scheduling (You should also obtain time quantum value)" << endl
          << endl;
     int methodmenuanswer;
+    cout << "your choice";
     cin >> methodmenuanswer;
     cout << endl;
     switch (methodmenuanswer)
@@ -220,6 +221,8 @@ void preemptivemode(bool *preemptivem, string selectedmethod, struct process *he
              << endl;
     }
     int preemptivemodeanswer;
+    cout << "your choice";
+
     cin >> preemptivemodeanswer;
     cout << endl;
     switch (preemptivemodeanswer)
@@ -261,18 +264,33 @@ int *fcfs(bool preemptivem, struct process *header, int count)
     }
     else
     {
-        return fcfsnonepreemptive(header, count);
+        return fcfsnonpreemptive(header, count);
     }
 }
 int *sjfnonpreemptive(bool preemptivem, process *header, int count)
 {
-
     bursttimesort(&header);
-    displayprocess(header);
-    return NULL;
+    int startingtime = 0;
+    struct process *temp = header;
+
+    int *waitingtime = (int *)malloc(count * sizeof(int));
+    for (int counter = 0; counter < count; counter++)
+    {
+        if (startingtime < temp->arrivaltime)
+        {
+            startingtime = temp->arrivaltime;
+        }
+
+        waitingtime[counter] = startingtime - temp->arrivaltime;
+        startingtime += temp->bursttime;
+
+        temp = temp->next;
+    }
+    return waitingtime;
 }
 int *sjfpreemptive(bool preemptivem, process *header, int count)
 {
+    cout << "************************************";
 }
 void priority()
 {
@@ -399,12 +417,12 @@ void bursttimesort(struct process **header)
             break;
     }
 }
-int *fcfsnonepreemptive(struct process *header, int count)
+int *fcfsnonpreemptive(struct process *header, int count)
 {
     arrivaltimesort(&header);
-    struct process *temp = header;
 
     int startingtime = 0;
+    struct process *temp = header;
 
     int *waitingtime = (int *)malloc(count * sizeof(int));
     int counter = 0;
@@ -414,10 +432,11 @@ int *fcfsnonepreemptive(struct process *header, int count)
         {
             startingtime = temp->arrivaltime;
         }
-        waitingtime[counter++] = startingtime - temp->arrivaltime;
+        waitingtime[counter] = startingtime - temp->arrivaltime;
         // cout<<"this is the waiting time of procces "<<counter<<waitingtime[counter-1]<<endl;
         startingtime += temp->bursttime;
         temp = temp->next;
+        counter++;
     }
     return waitingtime;
 }
