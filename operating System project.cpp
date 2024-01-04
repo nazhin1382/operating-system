@@ -6,10 +6,10 @@
 #include <algorithm>
 using namespace std;
 
-void firstmenu(struct process *, int);
+void firstmenu(struct process *, int, string);
 void methodmenu(string *, bool, struct process **, int);
 void preemptivemode(bool *, string, struct process *);
-void showresult(struct process **, int);
+void showresult(struct process **, int, string);
 
 void fcfs(bool, struct process **, int);
 void fcfsnonpreemptive(struct process **, int);
@@ -46,22 +46,20 @@ int main(int argc, char *argv[])
 {
     char opt;
     bool fselected, oselected;
-    string inputfile, outputfile;
-    ifstream inputfilename;
-    ofstream outputfilename;
+    string inputfilename, outputfilename;
+    ifstream inputfile;
 
     while ((opt = getopt(argc, argv, "f:o:")) != -1)
     {
         switch (opt)
         {
         case 'f':
-            inputfile = optarg;
-            inputfilename = ifstream(inputfile);
+            inputfilename = optarg;
+            inputfile = ifstream(inputfilename);
             fselected = true;
             break;
         case 'o':
-            outputfile = optarg;
-            outputfilename = ofstream(outputfile);
+            outputfilename = optarg;
             oselected = true;
 
             break;
@@ -79,7 +77,7 @@ int main(int argc, char *argv[])
     string line;
     struct process *header = NULL;
 
-    while (getline(inputfilename, line))
+    while (getline(inputfile, line))
     {
         replace(line.begin(), line.end(), ':', ' ');
         istringstream linestream(line);
@@ -113,12 +111,12 @@ int main(int argc, char *argv[])
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);*/
 
-    firstmenu(header, count);
+    firstmenu(header, count, outputfilename);
 
     return 0;
 }
 
-void firstmenu(struct process *header, int count)
+void firstmenu(struct process *header, int count, string outputfilename)
 {
     string selectedmethod = "1-None of scheduling method chosen";
     bool preemptivem = 0;
@@ -152,10 +150,22 @@ void firstmenu(struct process *header, int count)
                 cout << "please first select a scheduling method " << endl;
                 break;
             }
-            showresult(&header, count);
+            showresult(&header, count, outputfilename);
             break;
         case 4:
-
+            /*fcfsnonpreemptive(header,count);
+            showresult(&header, count, outputfile);
+             sjfnonpreemptive(preemptivem,header,count);
+            showresult(&header, count, outputfile);
+             sjfpreemptive(preemptivem,header,count);
+            showresult(&header, count, outputfile);
+             prioritynonpreemptive(preemptivem,header,count);
+            showresult(&header, count, outputfile);
+             prioritypreemptive(preemptivem,header,count);
+            showresult(&header, count, outputfile);
+             rr();
+            showresult(&header, count, outputfile);
+ */
             exit(1);
 
             break;
@@ -262,8 +272,9 @@ void preemptivemode(bool *preemptivem, string selectedmethod, struct process *he
         exit(1);
     }
 }
-void showresult(struct process **header, int count)
+void showresult(struct process **header, int count, string outputfilename)
 {
+    ofstream outputfile(outputfilename);
     pidsort(header);
     float sum = 0;
     struct process *temp = *header;
@@ -271,13 +282,14 @@ void showresult(struct process **header, int count)
     cout << "process waiting times:" << endl;
     while (temp != NULL)
     {
-        cout <<"p"<< temp->processid << " : " << temp->waitingtime << "ms" << endl;
-        // f << temp->processid << " : " << temp->waitingtime << "ms" << endl;
+        cout << "p" << temp->processid << " : " << temp->waitingtime << "ms" << endl;
+        outputfile << "p" << temp->processid << " : " << temp->waitingtime << "ms" << endl;
         sum += temp->waitingtime;
         temp = temp->next;
     }
     float averagewaitingtime = sum / count;
     cout << "average waiting time:  " << averagewaitingtime << "ms" << endl;
+    outputfile << "average waiting time:  " << averagewaitingtime << "ms" << endl;
 }
 
 void fcfs(bool preemptivem, struct process **header, int count)
@@ -403,7 +415,6 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
             numberofdoneprocess++;
         }
     }
-
 }
 void prioritypreemptive(bool preemptivem, struct process **header, int count)
 {
