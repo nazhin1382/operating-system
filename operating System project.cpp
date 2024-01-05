@@ -5,32 +5,34 @@
 #include <sstream>
 #include <algorithm>
 using namespace std;
-
+//menue functions 
 void firstmenu(struct process *, int, string);
 void methodmenu(string *, bool, struct process **, int);
+
 void preemptivemode(bool *, string, struct process *);
 void showresult(struct process **, int, string);
-
+//first come first served functions
 void fcfs(bool, struct process **, int);
 void fcfsnonpreemptive(struct process **, int);
-
+//shortest job first functions 
 void sjfnonpreemptive(bool, struct process **, int);
 void sjfpreemptive(bool, struct process **, int);
-
+//priority scheduling functions 
 void prioritynonpreemptive(bool, struct process **, int);
 void prioritypreemptive(bool, struct process **, int);
-
+//roundrobbin functions
 void rr();
-
+//linked list functions
 struct process *createprocess(int, int, int);
 struct process *insertprocess(struct process *, int, int, int);
 void displayprocess(struct process *);
-
+//sort functions 
 void pidsort(struct process **);
 void arrivaltimesort(struct process **);
 void bursttimesort(struct process **);
 void prioritysort(struct process **);
 struct process *swap(struct process *, struct process *);
+//linked list data structure
 struct process
 {
     int processid;
@@ -41,14 +43,14 @@ struct process
     bool isdone;
     struct process *next;
 };
-
+//main function
 int main(int argc, char *argv[])
 {
     char opt;
     bool fselected, oselected;
     string inputfilename, outputfilename;
     ifstream inputfile;
-
+//getting arguments
     while ((opt = getopt(argc, argv, "f:o:")) != -1)
     {
         switch (opt)
@@ -76,9 +78,9 @@ int main(int argc, char *argv[])
 
     string line;
     struct process *header = NULL;
-
+//read the file and insert it into the linked list 
     while (getline(inputfile, line))
-    {
+    {   
         replace(line.begin(), line.end(), ':', ' ');
         istringstream linestream(line);
         int bursttime, arrivaltime, priority;
@@ -92,6 +94,7 @@ int main(int argc, char *argv[])
 
     struct process *temp = header;
     int count = 0;
+    //count the number of the processes inside the linked list 
     while (temp != NULL)
     {
         count++;
@@ -312,7 +315,7 @@ void fcfsnonpreemptive(struct process **header, int count)
 
     int counter = 0;
     while (temp != NULL)
-    {
+    {   //check if the process is arrived or not 
         if (startingtime < temp->arrivaltime)
         {
             startingtime = temp->arrivaltime;
@@ -332,7 +335,7 @@ void sjfnonpreemptive(bool preemptivem, process **header, int count)
     struct process *temp = *header;
 
     for (int counter = 0; counter < count; counter++)
-    {
+    {   //check if the process is arrived or not 
         if (startingtime < temp->arrivaltime)
         {
             startingtime = temp->arrivaltime;
@@ -346,7 +349,7 @@ void sjfnonpreemptive(bool preemptivem, process **header, int count)
 }
 void sjfpreemptive(bool preemptivem, process **header, int count)
 {
-    // return waitingtime;
+    
 }
 void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
 {
@@ -368,11 +371,11 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
         while (temp != NULL)
         {
             if (selectedprocess == NULL)
-            {
+            {   //check if the process is executed before
                 if (temp->isdone == true)
                 {
                     temp = temp->next;
-                }
+                }//check if the process is arrived or not 
                 else if (temp->arrivaltime > startingtime)
                 {
                     temp = temp->next;
@@ -381,15 +384,17 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
                     selectedprocess = temp;
             }
             else
-            {
+            {//check if the process is executed before
                 if (temp->isdone == true)
                 {
                     temp = temp->next;
                 }
+                //check if the process is arrived or not
                 else if (temp->arrivaltime >= startingtime)
                 {
                     temp = temp->next;
                 }
+                //check the priorities 
                 else if (temp->priority >= selectedprocess->priority)
                 {
                     temp = temp->next;
