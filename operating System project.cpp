@@ -5,34 +5,34 @@
 #include <sstream>
 #include <algorithm>
 using namespace std;
-//menue functions 
+// menue functions
 void firstmenu(struct process *, int, string);
 void methodmenu(string *, bool, struct process **, int);
 
-void preemptivemode(bool *, string, struct process *);
+void preemptivemode(bool *, string, struct process **, int);
 void showresult(struct process **, int, string);
-//first come first served functions
+// first come first served functions
 void fcfs(bool, struct process **, int);
 void fcfsnonpreemptive(struct process **, int);
-//shortest job first functions 
+// shortest job first functions
 void sjfnonpreemptive(bool, struct process **, int);
 void sjfpreemptive(bool, struct process **, int);
-//priority scheduling functions 
+// priority scheduling functions
 void prioritynonpreemptive(bool, struct process **, int);
 void prioritypreemptive(bool, struct process **, int);
-//roundrobbin functions
+// roundrobbin functions
 void rr();
-//linked list functions
+// linked list functions
 struct process *createprocess(int, int, int);
 struct process *insertprocess(struct process *, int, int, int);
 void displayprocess(struct process *);
-//sort functions 
+// sort functions
 void pidsort(struct process **);
 void arrivaltimesort(struct process **);
 void bursttimesort(struct process **);
 void prioritysort(struct process **);
 struct process *swap(struct process *, struct process *);
-//linked list data structure
+// linked list data structure
 struct process
 {
     int processid;
@@ -40,17 +40,18 @@ struct process
     int arrivaltime;
     int priority;
     int waitingtime;
+    int remainingtime;
     bool isdone;
     struct process *next;
 };
-//main function
+// main function
 int main(int argc, char *argv[])
 {
     char opt;
     bool fselected, oselected;
     string inputfilename, outputfilename;
     ifstream inputfile;
-//getting arguments
+    // getting arguments
     while ((opt = getopt(argc, argv, "f:o:")) != -1)
     {
         switch (opt)
@@ -78,9 +79,9 @@ int main(int argc, char *argv[])
 
     string line;
     struct process *header = NULL;
-//read the file and insert it into the linked list 
+    // read the file and insert it into the linked list
     while (getline(inputfile, line))
-    {   
+    {
         replace(line.begin(), line.end(), ':', ' ');
         istringstream linestream(line);
         int bursttime, arrivaltime, priority;
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
 
     struct process *temp = header;
     int count = 0;
-    //count the number of the processes inside the linked list 
+    // count the number of the processes inside the linked list
     while (temp != NULL)
     {
         count++;
@@ -145,7 +146,7 @@ void firstmenu(struct process *header, int count, string outputfilename)
             methodmenu(&selectedmethod, preemptivem, &header, count);
             break;
         case 2:
-            preemptivemode(&preemptivem, selectedmethod, header);
+            preemptivemode(&preemptivem, selectedmethod, &header, count);
             break;
         case 3:
             if (selectedmethod == "1-None of scheduling method chosen")
@@ -229,13 +230,14 @@ void methodmenu(string *selectedmethod, bool preemptivem, struct process **heade
         break;
     case 5:
         *selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
+        rr();
         break;
     default:
         cout << "please select between the mene choices (1-5)" << endl;
         exit(1);
     }
 }
-void preemptivemode(bool *preemptivem, string selectedmethod, struct process *header)
+void preemptivemode(bool *preemptivem, string selectedmethod, struct process **header, int count)
 {
     if (selectedmethod == "1-None of scheduling method chosen")
     {
@@ -273,6 +275,37 @@ void preemptivemode(bool *preemptivem, string selectedmethod, struct process *he
     default:
         cout << "please select from the numbers (1-3)" << endl;
         exit(1);
+    }
+
+    if (selectedmethod == "2-First Come,First Served Scheduling")
+    {
+        fcfs(preemptivem, header, count);
+    }
+    else if (selectedmethod == "3-Shortest-Job-First Scheduling")
+    {
+        if (*preemptivem)
+        {
+            sjfpreemptive(*preemptivem, header, count);
+        }
+        else
+        {
+            sjfnonpreemptive(*preemptivem, header, count);
+        }
+    }
+    else if (selectedmethod == "4-Priority Scheduling")
+    {
+        if (*preemptivem)
+        {
+            prioritypreemptive(*preemptivem, header, count);
+        }
+        else
+        {
+            prioritynonpreemptive(*preemptivem, header, count);
+        }
+    }
+    else if (selectedmethod == "5-Round-Robin Scheduling (You should also obtain time quantum value)")
+    {
+        rr();
     }
 }
 void showresult(struct process **header, int count, string outputfilename)
@@ -315,7 +348,7 @@ void fcfsnonpreemptive(struct process **header, int count)
 
     int counter = 0;
     while (temp != NULL)
-    {   //check if the process is arrived or not 
+    { // check if the process is arrived or not
         if (startingtime < temp->arrivaltime)
         {
             startingtime = temp->arrivaltime;
@@ -335,7 +368,7 @@ void sjfnonpreemptive(bool preemptivem, process **header, int count)
     struct process *temp = *header;
 
     for (int counter = 0; counter < count; counter++)
-    {   //check if the process is arrived or not 
+    { // check if the process is arrived or not
         if (startingtime < temp->arrivaltime)
         {
             startingtime = temp->arrivaltime;
@@ -371,11 +404,11 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
         while (temp != NULL)
         {
             if (selectedprocess == NULL)
-            {   //check if the process is executed before
+            { // check if the process is executed before
                 if (temp->isdone == true)
                 {
                     temp = temp->next;
-                }//check if the process is arrived or not 
+                } // check if the process is arrived or not
                 else if (temp->arrivaltime > startingtime)
                 {
                     temp = temp->next;
@@ -384,17 +417,17 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
                     selectedprocess = temp;
             }
             else
-            {//check if the process is executed before
+            { // check if the process is executed before
                 if (temp->isdone == true)
                 {
                     temp = temp->next;
                 }
-                //check if the process is arrived or not
+                // check if the process is arrived or not
                 else if (temp->arrivaltime >= startingtime)
                 {
                     temp = temp->next;
                 }
-                //check the priorities 
+                // check the priorities
                 else if (temp->priority >= selectedprocess->priority)
                 {
                     temp = temp->next;
