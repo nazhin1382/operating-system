@@ -331,8 +331,23 @@ void showresult(struct process **header, int count, string outputfilename)
 void fcfs(bool preemptivem, struct process **header, int count)
 {
     if (preemptivem)
-    {
-        cout << "first come first served is not supporting preemptive mode";
+    {   char answer;
+        cout <<endl<<"!!!!!!warning message !!!!!!"<<endl;
+        cout<< "first come first served is not supporting preemptive mode,"<<endl;
+        cout<<" to see the nonpreemtive mode result for firstcomefirst scheduling press 'Y' or press"<<endl;
+        cout<<"'N' to see the main menu again"<<endl;
+        cout<<"your choice";
+        cin>>answer;
+        if(answer=='y'|| answer == 'Y')
+        {
+         fcfsnonpreemptive(header, count);   
+         //showresult(header, count);
+        }
+        else if(answer !='n'|| answer =='N'||answer=='y'|| answer == 'Y')
+        {
+          cout<<"press 'y' or 'n' ";
+
+        }
     }
     else
     {
@@ -419,6 +434,7 @@ void sjfpreemptive(bool preemptivem, process **header, int count)
                             {
                                 selectedprocess = temp;
                             }
+                            else
                             if (selectedprocess->remainingtime > temp->remainingtime)
                             {
                                 selectedprocess = temp;
@@ -510,6 +526,61 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
 }
 void prioritypreemptive(bool preemptivem, struct process **header, int count)
 {
+     prioritysort(header);
+
+    struct process *temp = *header;
+
+    for (int i = 0; i < count; i++)
+    {
+        temp->remainingtime = temp->bursttime;
+        temp = temp->next;
+    }
+
+    int startingtime = 0;
+
+    int numberofdoneprocess = 0;
+    struct process *selectedprocess;
+
+    while (numberofdoneprocess < count)
+    {
+        temp = *header;
+        selectedprocess = NULL;
+        while (selectedprocess == NULL)
+        {
+            while (temp != NULL)
+            {
+                if (startingtime >= temp->arrivaltime)
+                {
+                    if (temp->remainingtime > 0)
+                    {
+                        if (selectedprocess == NULL)
+                        {
+                            selectedprocess = temp;
+                        }
+                        else
+                        {
+                            if (selectedprocess->priority == temp->priority && selectedprocess->arrivaltime > temp->arrivaltime)
+                            {
+                                selectedprocess = temp;
+                            }
+                            if (selectedprocess->priority > temp->priority)
+                            {
+                                selectedprocess = temp;
+                            }
+                        }
+                    }
+                }
+                temp = temp->next;
+            }
+            startingtime++;
+        }
+        selectedprocess->remainingtime--;
+        if (selectedprocess->remainingtime == 0)
+        {
+            selectedprocess->waitingtime = startingtime - selectedprocess->arrivaltime - selectedprocess->bursttime;
+            numberofdoneprocess++;
+        }
+    }
 }
 
 void rr()
