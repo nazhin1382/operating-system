@@ -382,7 +382,61 @@ void sjfnonpreemptive(bool preemptivem, process **header, int count)
 }
 void sjfpreemptive(bool preemptivem, process **header, int count)
 {
-    
+    bursttimesort(header);
+
+    struct process *temp = *header;
+
+    for (int i = 0; i < count; i++)
+    {
+        temp->remainingtime = temp->bursttime;
+        temp = temp->next;
+    }
+
+    int startingtime = 0;
+
+    int numberofdoneprocess = 0;
+    struct process *selectedprocess;
+
+    while (numberofdoneprocess < count)
+    {
+        temp = *header;
+        selectedprocess = NULL;
+        while (selectedprocess == NULL)
+        {
+            while (temp != NULL)
+            {
+                if (startingtime >= temp->arrivaltime)
+                {
+                    if (temp->remainingtime > 0)
+                    {
+                        if (selectedprocess == NULL)
+                        {
+                            selectedprocess = temp;
+                        }
+                        else
+                        {
+                            if (selectedprocess->remainingtime == temp->remainingtime && selectedprocess->arrivaltime > temp->arrivaltime)
+                            {
+                                selectedprocess = temp;
+                            }
+                            if (selectedprocess->remainingtime > temp->remainingtime)
+                            {
+                                selectedprocess = temp;
+                            }
+                        }
+                    }
+                }
+                temp = temp->next;
+            }
+            startingtime++;
+        }
+        selectedprocess->remainingtime--;
+        if (selectedprocess->remainingtime == 0)
+        {
+            selectedprocess->waitingtime = startingtime - selectedprocess->arrivaltime - selectedprocess->bursttime;
+            numberofdoneprocess++;
+        }
+    }
 }
 void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
 {
