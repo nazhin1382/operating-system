@@ -21,7 +21,8 @@ void sjfpreemptive(bool, struct process **, int);
 void prioritynonpreemptive(bool, struct process **, int);
 void prioritypreemptive(bool, struct process **, int);
 // roundrobbin functions
-void rr();
+void rrpreemptive(bool, struct process **, int);
+void rrnonpreemptive(bool, struct process **, int);
 // linked list functions
 struct process *createprocess(int, int, int);
 struct process *insertprocess(struct process *, int, int, int);
@@ -103,13 +104,13 @@ int main(int argc, char *argv[])
         temp = temp->next;
     }
 
-    /*just for test and should be cleared
+   // just for test and should be cleared
     cout << "this is the normal list" << endl;
     displayprocess(header);
     arrivaltimesort(&header);
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);
-        cout << "this is the normal list" << endl;
+      /*  cout << "this is the normal list" << endl;
     displayprocess(header);
     bursttimesort(&header);
     cout << "this is the sorted linked list " << endl;
@@ -232,7 +233,13 @@ void methodmenu(string *selectedmethod, bool preemptivem, struct process **heade
         break;
     case 5:
         *selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
-        rr();
+        if(preemptivem)
+        {
+            rrpreemptive(preemptivem, header, count);
+        }
+        else{
+            rrnonpreemptive(preemptivem, header, count);
+        }
         break;
     default:
         cout << "please select between the mene choices (1-5)" << endl;
@@ -307,7 +314,14 @@ void preemptivemode(bool *preemptivem, string selectedmethod, struct process **h
     }
     else if (selectedmethod == "5-Round-Robin Scheduling (You should also obtain time quantum value)")
     {
-        rr();
+        if (*preemptivem)
+        {
+            rrpreemptive(*preemptivem, header, count);
+        }
+        else
+        {
+            rrnonpreemptive(*preemptivem, header, count);
+        }
     }
 }
 void showresult(struct process **header, int count, ofstream *outputfile)
@@ -606,8 +620,12 @@ void prioritypreemptive(bool preemptivem, struct process **header, int count)
     }
 }
 
-void rr()
+void rrpreemptive(bool preemptivem, struct process ** header, int count)
 {
+}
+void rrnonpreemptive(bool preemptivem, struct process ** header, int count)
+{
+
 }
 
 struct process *createprocess(int bursttime, int arrivaltime, int priority)
