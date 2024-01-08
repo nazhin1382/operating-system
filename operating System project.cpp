@@ -356,13 +356,12 @@ void fcfs(bool preemptivem, struct process **header, int count)
 void fcfsnonpreemptive(struct process **header, int count)
 {
     arrivaltimesort(header);
-
     int startingtime = 0;
     struct process *temp = *header;
 
-    int counter = 0;
     while (temp != NULL)
-    { // check if the process is arrived or not
+    {
+        // check if the process is arrived or not
         if (startingtime < temp->arrivaltime)
         {
             startingtime = temp->arrivaltime;
@@ -371,29 +370,55 @@ void fcfsnonpreemptive(struct process **header, int count)
         // cout<<"this is the waiting time of procces "<<counter<<waitingtime[counter-1]<<endl;
         startingtime += temp->bursttime;
         temp = temp->next;
-        counter++;
     }
 }
 
 void sjfnonpreemptive(bool preemptivem, process **header, int count)
 {
     bursttimesort(header);
-    int startingtime = 0;
     struct process *temp = *header;
+    struct process *selectedprocess;
+    int startingtime = 0;
+    int numberofdoneprocess = 0;
 
-    for (int counter = 0; counter < count; counter++)
-    { // check if the process is arrived or not
-        if (startingtime < temp->arrivaltime)
-        {
-            startingtime = temp->arrivaltime;
-        }
-
-        temp->waitingtime = startingtime - temp->arrivaltime;
-        startingtime += temp->bursttime;
-
+    for (int i = 0; i < count; i++)
+    {
+        temp->isdone = false;
         temp = temp->next;
     }
+
+    while (numberofdoneprocess < count)
+    {
+        temp = *header;
+        selectedprocess = NULL;
+
+        while (temp != NULL)
+        {
+            if (temp->isdone != true && startingtime >= temp->arrivaltime)
+            {
+                if (selectedprocess == NULL || (selectedprocess->arrivaltime > temp->arrivaltime && selectedprocess->bursttime > temp->bursttime))
+                {
+                    selectedprocess = temp;
+                }
+            }
+            temp = temp->next;
+        }
+
+        if (selectedprocess != NULL)
+        {
+            startingtime += selectedprocess->bursttime;
+            selectedprocess->isdone = true;
+            selectedprocess->waitingtime = startingtime - selectedprocess->arrivaltime - selectedprocess->bursttime;
+            numberofdoneprocess++;
+        }
+        else if (selectedprocess == NULL)
+        {
+            // if no process arrived increase the starting time till reach an arrived process
+            startingtime++;
+        }
+    }
 }
+
 void sjfpreemptive(bool preemptivem, process **header, int count)
 {
     bursttimesort(header);
