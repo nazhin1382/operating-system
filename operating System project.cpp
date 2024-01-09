@@ -26,6 +26,8 @@ void rrnonpreemptive(bool, struct process **, int);
 // linked list functions
 struct process *createprocess(int, int, int);
 struct process *insertprocess(struct process *, int, int, int);
+struct process *insertreadyqueue(struct process *, int, int, int, int, int, int, bool);
+struct process *deletereadyqueue(struct process *);
 void displayprocess(struct process *);
 // sort functions
 void pidsort(struct process **);
@@ -104,17 +106,17 @@ int main(int argc, char *argv[])
         temp = temp->next;
     }
 
-   // just for test and should be cleared
+    // just for test and should be cleared
     cout << "this is the normal list" << endl;
     displayprocess(header);
     arrivaltimesort(&header);
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);
-      /*  cout << "this is the normal list" << endl;
-    displayprocess(header);
-    bursttimesort(&header);
-    cout << "this is the sorted linked list " << endl;
-    displayprocess(header);*/
+    /*  cout << "this is the normal list" << endl;
+  displayprocess(header);
+  bursttimesort(&header);
+  cout << "this is the sorted linked list " << endl;
+  displayprocess(header);*/
 
     ofstream outputfile(outputfilename);
     firstmenu(header, count, &outputfile);
@@ -233,11 +235,12 @@ void methodmenu(string *selectedmethod, bool preemptivem, struct process **heade
         break;
     case 5:
         *selectedmethod = "5-Round-Robin Scheduling (You should also obtain time quantum value)";
-        if(preemptivem)
+        if (preemptivem)
         {
             rrpreemptive(preemptivem, header, count);
         }
-        else{
+        else
+        {
             rrnonpreemptive(preemptivem, header, count);
         }
         break;
@@ -369,6 +372,7 @@ void fcfs(bool preemptivem, struct process **header, int count)
 }
 void fcfsnonpreemptive(struct process **header, int count)
 {
+    pidsort(header);
     arrivaltimesort(header);
     int startingtime = 0;
     struct process *temp = *header;
@@ -389,6 +393,7 @@ void fcfsnonpreemptive(struct process **header, int count)
 
 void sjfnonpreemptive(bool preemptivem, process **header, int count)
 {
+    pidsort(header);
     bursttimesort(header);
     struct process *temp = *header;
     struct process *selectedprocess;
@@ -435,6 +440,7 @@ void sjfnonpreemptive(bool preemptivem, process **header, int count)
 
 void sjfpreemptive(bool preemptivem, process **header, int count)
 {
+    pidsort(header);
     bursttimesort(header);
 
     struct process *temp = *header;
@@ -493,6 +499,7 @@ void sjfpreemptive(bool preemptivem, process **header, int count)
 }
 void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
 {
+    pidsort(header);
     prioritysort(header);
     struct process *temp = *header;
     int startingtime = 0;
@@ -563,6 +570,7 @@ void prioritynonpreemptive(bool preemptivem, struct process **header, int count)
 }
 void prioritypreemptive(bool preemptivem, struct process **header, int count)
 {
+    pidsort(header);
     prioritysort(header);
 
     struct process *temp = *header;
@@ -620,12 +628,100 @@ void prioritypreemptive(bool preemptivem, struct process **header, int count)
     }
 }
 
-void rrpreemptive(bool preemptivem, struct process ** header, int count)
+void rrpreemptive(bool preemptivem, struct process **header, int count)
 {
-}
-void rrnonpreemptive(bool preemptivem, struct process ** header, int count)
-{
+    pidsort(header);
+    int answer;
+    cout << "please enter the quantum number" << endl
+         << "your answer>>";
+    cin >> answer;
+    int numberofdoneprocess = 0;
+    int startingtime = 0;
+    struct process *temp = *header;
+    struct process *selectedprocess;
+    for (int i = 0; i < count; i++)
+    {
+        temp->isdone = false;
+        temp = temp->next;
+    }
+    temp = *header;
+    for (int i = 0; i < count; i++)
+    {
+        temp->remainingtime = temp->bursttime;
+        temp = temp->next;
+    }
+    arrivaltimesort(header);
+    struct process *readyqueue = NULL;
+    while (numberofdoneprocess != count)
+    {
+        temp = *header;
+        selectedprocess = NULL;
+        while (temp != NULL)
+        {
+            if (temp->arrivaltime == startingtime)
+            {
+                readyqueue = insertreadyqueue(readyqueue, temp->processid, temp->bursttime, temp->arrivaltime, temp->priority, temp->remainingtime, temp->waitingtime, temp->isdone);
+            }
 
+            if (readyqueue != NULL)
+            {
+                if (readyqueue->isdone==true)
+                {
+                    if (readyqueue->remainingtime > 0)
+                    {
+                        readyqueue = insertreadyqueue(readyqueue, temp->processid, temp->bursttime, temp->arrivaltime, temp->priority, temp->remainingtime, temp->waitingtime, temp->isdone);
+                        readyqueue = deletereadyqueue(readyqueue);
+                    }
+                    readyqueue->isdone=false;
+                }
+
+                if (readyqueue->remainingtime > answer)
+                {
+                    readyqueue->remainingtime -= answer;
+                    startingtime += answer;
+
+                    struct process *temp2 = *header;
+                    while (temp2 != NULL)
+                    {
+                        if (temp2->processid == readyqueue->processid)
+                        {
+                            temp2->remainingtime = readyqueue->remainingtime;
+                            break;
+                        }
+                        temp2 = temp2->next;
+                    }
+                    readyqueue->isdone=true;
+                }
+                else if (readyqueue->remainingtime <= answer)
+                {
+                    startingtime += readyqueue->remainingtime;
+                    readyqueue->remainingtime = 0;
+
+                    struct process *temp2 = *header;
+                    while (temp2 != NULL)
+                    {
+                        if (temp2->processid == readyqueue->processid)
+                        {
+                            temp2->remainingtime = 0;
+                            temp2->waitingtime = startingtime - temp2->bursttime - temp2->arrivaltime;
+                            break;
+                        }
+                        temp2 = temp2->next;
+                    }
+                    readyqueue = deletereadyqueue(readyqueue);
+                }
+            }
+            else
+            {
+                startingtime++;
+            }
+            temp = temp->next;
+        }
+    }
+}
+
+void rrnonpreemptive(bool preemptivem, struct process **header, int count)
+{
 }
 
 struct process *createprocess(int bursttime, int arrivaltime, int priority)
@@ -824,4 +920,32 @@ void prioritysort(struct process **header)
         if (swapped == 0)
             break;
     }
+}
+struct process *insertreadyqueue(struct process *header, int pid, int bursttime, int arrivaltime, int priority, int remainingtime, int waitingtime, bool isdone)
+{
+    struct process *temp = createprocess(bursttime, arrivaltime, priority);
+    temp->processid = pid;
+    temp->remainingtime = remainingtime;
+    temp->isdone = isdone;
+    struct process *headertemp;
+    if (header == NULL)
+    {
+        header = temp;
+        return header;
+    }
+    headertemp = header;
+    while (headertemp->next != NULL)
+        headertemp = headertemp->next;
+    headertemp->next = temp;
+    return header;
+}
+struct process *deletereadyqueue(struct process *header)
+{
+    struct process *temp;
+    if (header == NULL)
+        return header;
+    temp = header;
+    header = header->next;
+    free(temp);
+    return header;
 }
