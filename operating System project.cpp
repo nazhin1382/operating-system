@@ -109,13 +109,13 @@ int main(int argc, char *argv[])
         temp = temp->next;
     }
 
-    // just for test and should be cleared
+    /*  just for test and should be cleared
     cout << "this is the normal list" << endl;
     displayprocess(header);
     arrivaltimesort(&header);
     cout << "this is the sorted linked list " << endl;
     displayprocess(header);
-    /*  cout << "this is the normal list" << endl;
+     cout << "this is the normal list" << endl;
   displayprocess(header);
   bursttimesort(&header);
   cout << "this is the sorted linked list " << endl;
@@ -746,7 +746,7 @@ int rrpreemptive(struct process **header, int count)
     struct process *select = NULL;
 
     while (!doneprocess(*header) || readyqueue != NULL)
-    {
+    {   //reset the header
         temp = *header;
         while (temp != NULL && temp->arrivaltime <= startingtime)
         {
@@ -813,8 +813,7 @@ int rrnonpreemptive(struct process **header, int count)
     // reset the header
     temp = *header;
     for (int i = 0; i < count; i++)
-    { /*the variable isdone in this function shows
-      that if the process is already in the queue or not*/
+    {
         temp->isdone = false;
         temp = temp->next;
     }
@@ -822,12 +821,6 @@ int rrnonpreemptive(struct process **header, int count)
     for (int i = 0; i < count; i++)
     {
         temp->remainingtime = temp->bursttime;
-        temp = temp->next;
-    }
-    temp = *header;
-    for (int i = 0; i < count; i++)
-    {
-        temp->waitingtime = 0;
         temp = temp->next;
     }
     // sorting the linked list according to the arrival time
@@ -841,9 +834,7 @@ int rrnonpreemptive(struct process **header, int count)
         while (temp != NULL && temp->arrivaltime <= startingtime)
         {
             if (!temp->isdone && temp->remainingtime > 0)
-            { /*the variable isdone in this function shows
-              that if the process is already in the queue or not,
-              so if it is not we will insert it */
+            {
                 temp->isdone = true;
                 readyqueue = insertreadyqueue(readyqueue, temp);
             }
