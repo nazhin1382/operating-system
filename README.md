@@ -5,3 +5,7 @@ you should have an input file and also an output file. An example of the command
 I spend 3 weeks to complete this project.I did all of the 8 functions for cpu scheduling simulator.
 but for example,the content of fcfspreemptive, which does not support preemptive mode, is same as fcfsnonpreemptive 
 so it shows the result for the nonpreemptive,same as round robin.
+
+student no: 22108813
+name and surname:Nazhin Abdolbaghi
+
