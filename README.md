@@ -1,4 +1,4 @@
-opration system project
+<opration system project>
 this is my first project in github and I did my best to 
 make it as good as possible. I have a cpp file "operating system project" which contains my source code which can run on linux environment.
 you should have an input file and also an output file. An example of the command line which will run the program is "./cmpe351 -f input.txt -o output.txt". 
